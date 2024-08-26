@@ -46,6 +46,24 @@ with LAUNCHER_SETTINGS_PATH.open('w', encoding='utf-8') as f:
     content['gameDataPath'] = str(DATA_DIR)
     json.dump(content, f, indent=4, ensure_ascii=False)
 
+# 检测无效的定位文件
+for mod in DATA_DIR.joinpath('mod').iterdir():
+    if mod.is_file() and mod.suffix == '.mod':
+        with mod.open('r', encoding='utf-8') as f:
+            content = f.read()
+            path = re.search(r'path\s*=\s*"([^"]+)"', content)
+            if path:
+                path = path.group(1)
+            else:
+                print(f'检测到无效的定位文件: {mod.name}')
+                mod.unlink()
+                continue
+
+        if not Path(path).exists():
+            print(f'检测到无效的定位文件: {mod.name}')
+            mod.unlink()
+            continue
+
 # 加载Mod
 mod_names = []
 for mod in MOD_DIR.iterdir():
@@ -53,23 +71,24 @@ for mod in MOD_DIR.iterdir():
     if mod.is_dir() and descriptor_path.exists():
         with descriptor_path.open('r', encoding='utf-8') as f:
             content = f.read()
-            name = re.search(r'name\s*=\s*"([^"]+)"', content)
-            if name:
-                name = name.group(1)
-                mod_names.append(name)
+            path = re.search(r'name\s*=\s*"([^"]+)"', content)
+            if path:
+                path = path.group(1)
+                mod_names.append(path)
             else:
                 continue
 
-        with DATA_DIR.joinpath('mod', f'{name}.mod').open('w', encoding='utf-8') as f:
+        with DATA_DIR.joinpath('mod', f'{path}.mod').open('w', encoding='utf-8') as f:
             f.write(content)
             f.write(f'\npath="{mod.as_posix()}"')
+
 
 # 输出信息
 print(f'共计加载: {len(mod_names)}个模组')
 print('他们分别是: ')
 print('-' * 50)
-for name in mod_names:
-    print(name)
+for path in mod_names:
+    print(path)
 print('-' * 50)
 
 # 启动dowser(启动器)
