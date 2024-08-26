@@ -27,6 +27,10 @@ CWD = Path.cwd()
 DATA_DIR = CWD.joinpath('Paradox Interactive', 'Hearts of Iron IV')
 MOD_DIR = CWD.joinpath('mod')
 
+# 创建目录
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+MOD_DIR.mkdir(parents=True, exist_ok=True)
+
 # 检查启动器配置文件
 LAUNCHER_SETTINGS_PATH = CWD.joinpath('launcher-settings.json')
 
