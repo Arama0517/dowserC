@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+tasks:
+  tidy:
+    desc: 更新依赖 (运行go mod tidy)
+    cmds:
+      - go mod tidy
+
+  run:
+    desc: 运行程序
+    cmd: go run ./cmd/dowserC/main.go {{.CLI_ARGS}}
+
+  build:
+    desc: 构建
+    env:
+      LC_ALL: C.UTF-8
+    sources:
+      - ./**/*.go
+    generates:
+      - "./dowserC.exe"
+    cmd: go build -o dowserC.exe {{ .CLI_ARGS }} ./cmd/dowserC
+
+  test:
+    desc: 运行测试
+    env:
+      LC_ALL: C.UTF-8
+    vars:
+      SOURCE_FILES: '{{default "./..." .SOURCE_FILES}}'
+      TEST_PATTERN: '{{default "." .TEST_PATTERN}}'
+    cmd: go test {{ .CLI_ARGS }} -failfast {{ .SOURCE_FILES }} -run {{ .TEST_PATTERN }} -timeout=5m
+
+  lint:
+    desc: 使用 golangci-lint 检查代码
+    cmd: golangci-lint run --config ./.golangci.yaml {{.CLI_ARGS}} ./...
+
+  fmt:
+    desc: 使用 gofumpt 格式化代码
+    cmd: gofumpt -w -l .
+
+  ci:
+    desc: 运行所有CI步骤
+    cmds:
+      - task: setup
+      - task: build
+      - task: test
+
+  default:
+    desc: 运行默认任务(运行程序)
+    cmds:
+      - task: run
+
+  release:
+    desc: 发布新版本
+    vars:
+      NEXT:
+        sh: svu n
+    cmds:
+      - git tag {{.NEXT}}
+      - echo {{.NEXT}}
+      - git push origin --tags

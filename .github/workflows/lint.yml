@@ -1,0 +1,31 @@
+name: 检查代码
+
+on:
+  push:
+    paths:
+      - "**.go"
+      - .golangci.yaml
+      - go.mod
+      - go.sum
+  pull_request:
+    paths:
+      - "**.go"
+      - .golangci.yaml
+      - go.mod
+      - go.sum
+
+jobs:
+  golangci-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: 运行 golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest

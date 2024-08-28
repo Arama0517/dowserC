@@ -1,0 +1,10 @@
+{
+    // [[Go]]
+    "gopls": {
+        "formatting.gofumpt": true,
+    },
+    "go.lintTool": "golangci-lint", // 使用golangci-lint检查代码
+    "go.lintFlags": [
+        "--fast"
+    ],
+}

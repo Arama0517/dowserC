@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
+
+env:
+  - GO111MODULE=on
+
+before:
+  hooks:
+    - go mod tidy
+
+gomod:
+  proxy: true
+
+metadata:
+  mod_timestamp: "{{ .CommitTimestamp }}"
+
+builds:
+  - binary: "dowserC"
+    main: "./cmd/dowserC"
+    goos:
+      - windows
+    goarch:
+      - "386"
+      - amd64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s
+      - -w
+      - -X github.com/Arama0517/MCST/internal/build.version={{ .Version }}
+      - -X github.com/Arama0517/MCST/internal/build.commit={{ .Commit }}
+      - -X github.com/Arama0517/MCST/internal/build.date={{ .CommitDate }}
+      - -X github.com/Arama0517/MCST/internal/build.builtBy=GoReleaser
+      - -X github.com/Arama0517/MCST/internal/build.treeState={{ .IsGitDirty }}
+
+archives:
+  - format: zip
+    name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
+    builds_info:
+      group: root
+      owner: root
+    files:
+      - README.md
+      - LICENSE
+
+source:
+  enabled: true
+  name_template: "{{ .ProjectName }}-{{ .Version }}-source"
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^test:"
+      - "^test\\("
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+      - go mod tidy
+  groups:
+    - title: 依赖更新
+      regexp: '^.*?(.+)\(deps\)!?:.+$'
+      order: 300
+    - title: 新功能
+      regexp: '^.*?feat(\(.+\))??!?:.+$'
+      order: 100
+    - title: 修复Bug
+      regexp: '^.*?(fix|refactor)(\(.+\))??!?:.+$'
+      order: 200
+    - title: 文档更新
+      regexp: ^.*?docs?(\(.+\))??!?:.+$
+      order: 400
+    - title: 构建流程更新
+      regexp: ^.*?(build|ci)(\(.+\))??!?:.+$
+      order: 400
+    - title: 其他
+      order: 9999
+
+release:
+  name_template: "v{{ .Version }}"
+  footer: |
+    **完整的更新日志**: https://github.com/Arama0517/dowserC/compare/{{ .PreviousTag }}...{{ .Tag }}
