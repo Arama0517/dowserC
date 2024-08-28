@@ -57,7 +57,7 @@ func init() {
 
 	// 定义Mod目录
 	ModDir = filepath.Join(CWD, "mod")
-	os.MkdirAll(ModDir, 0o755)
+	_ = os.MkdirAll(ModDir, 0o755)
 
 	// 检查启动器配置文件是否存在
 	if file, err := os.Open(LauncherSettingsPath); os.IsNotExist(err) {
@@ -77,7 +77,7 @@ func init() {
 			log.Fatal("解析启动器配置文件为JSON失败, 可能是因为格式错误或者为非法内容")
 		}
 		DataDir = filepath.Join(CWD, "Paradox Interactive", settings.DisplayName)
-		os.MkdirAll(DataDir, 0o755)
+		_ = os.MkdirAll(DataDir, 0o755)
 		file.Close()
 
 		// 修改数据目录
