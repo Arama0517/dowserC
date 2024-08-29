@@ -7,10 +7,6 @@ tasks:
     cmds:
       - go mod tidy
 
-  run:
-    desc: 运行程序
-    cmd: go run ./cmd/dowserC/main.go {{.CLI_ARGS}}
-
   build:
     desc: 构建
     env:
@@ -39,16 +35,16 @@ tasks:
     cmd: gofumpt -w -l .
 
   ci:
-    desc: 运行所有CI步骤
+    desc: 运行CI
     cmds:
       - task: setup
       - task: build
       - task: test
 
   default:
-    desc: 运行默认任务(运行程序)
+    desc: 运行CI
     cmds:
-      - task: run
+      - task: ci
 
   release:
     desc: 发布新版本

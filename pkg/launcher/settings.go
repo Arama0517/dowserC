@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/apex/log"
+	"github.com/caarlos0/log"
 )
 
 var (
@@ -55,10 +55,6 @@ func init() {
 	// 定义启动器配置文件路径
 	LauncherSettingsPath = filepath.Join(CWD, "launcher-settings.json")
 
-	// 定义Mod目录
-	ModDir = filepath.Join(CWD, "mod")
-	_ = os.MkdirAll(ModDir, 0o755)
-
 	// 检查启动器配置文件是否存在
 	if file, err := os.Open(LauncherSettingsPath); os.IsNotExist(err) {
 		log.Error("启动器配置文件不存在")
@@ -74,7 +70,7 @@ func init() {
 		}
 		var settings launcherSettings
 		if err := json.Unmarshal(byteData, &settings); err != nil {
-			log.Fatal("解析启动器配置文件为JSON失败, 可能是因为格式错误或者为非法内容")
+			log.WithError(err).Fatal("解析启动器配置文件为JSON失败, 可能是因为格式错误或者为非法内容")
 		}
 		DataDir = filepath.Join(CWD, "Paradox Interactive", settings.DisplayName)
 		_ = os.MkdirAll(DataDir, 0o755)
@@ -92,4 +88,8 @@ func init() {
 			}
 		}
 	}
+
+	// 定义Mod目录
+	ModDir = filepath.Join(CWD, "mod")
+	_ = os.MkdirAll(ModDir, 0o755)
 }

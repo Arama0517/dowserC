@@ -1,0 +1,8 @@
+{
+    "Log fatal with error": {
+        "scope": "go",
+        "prefix": "lferr",
+        "body": ["log.WithError(err).Fatal(\"$1\")"],
+        "description": "Log fatal error"
+    }
+}

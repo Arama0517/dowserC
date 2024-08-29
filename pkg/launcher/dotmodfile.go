@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/apex/log"
+	"github.com/caarlos0/log"
 )
 
 var ErrNoNameFound = errors.New("没有找到Mod的名称")
