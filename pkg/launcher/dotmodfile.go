@@ -43,3 +43,4 @@ func GenerateDotModFile(path string) (string, error) {
 	}
 	return modName, nil
 }
+

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"path/filepath"
+	"regexp"
 	"time"
 
 	"github.com/Arama0517/dowserC/pkg/launcher"
@@ -12,7 +14,41 @@ import (
 const version = "devel"
 
 func main() {
-	log.Infof("dowserC 版本: %s", version)
+	// debug模式
+	debug := flag.Bool("debug", false, "开启调试模式")
+	flag.Parse()
+	if *debug {
+		log.SetLevel(log.DebugLevel)
+	}
+	log.Debugf("dowserC 版本: %s", version)
+
+	// 检测无效Mod
+	log.Debug("开始检测Mod是否有效")
+	log.IncreasePadding()
+	files, err := filepath.Glob(filepath.Join(launcher.DataDir, "mod", "*.mod"))
+	if err != nil {
+		log.WithError(err).Fatal("获取mod定位文件失败")
+	}
+	for _, file := range files {
+		byteData, err := os.ReadFile(file)
+		if err != nil {
+			log.WithError(err).Fatal("读取mod定位文件失败")
+		}
+		re := regexp.MustCompile(`path\s*=\s*"([^"]+)"`)
+		match := re.FindStringSubmatch(string(byteData))
+		if match == nil {
+			os.Remove(file)
+			log.WithField("path", file).Debug("删除无效的mod定位文件")
+			continue
+		}
+		path := match[1]
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			os.Remove(file)
+			log.WithField("path", file).Debug("删除无效的mod定位文件")
+		}
+	}
+	log.ResetPadding()
+
 	entries, err := os.ReadDir(launcher.ModDir)
 	if err != nil {
 		log.WithError(err).Fatal("获取Mod失败, 可能是因为权限不足")
