@@ -9,7 +9,10 @@ import (
 	"github.com/caarlos0/log"
 )
 
+const version = "devel"
+
 func main() {
+	log.Infof("dowserC 版本: %s", version)
 	entries, err := os.ReadDir(launcher.ModDir)
 	if err != nil {
 		log.WithError(err).Fatal("获取Mod失败, 可能是因为权限不足")

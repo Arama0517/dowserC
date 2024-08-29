@@ -28,11 +28,7 @@ builds:
     ldflags:
       - -s
       - -w
-      - -X github.com/Arama0517/MCST/internal/build.version={{ .Version }}
-      - -X github.com/Arama0517/MCST/internal/build.commit={{ .Commit }}
-      - -X github.com/Arama0517/MCST/internal/build.date={{ .CommitDate }}
-      - -X github.com/Arama0517/MCST/internal/build.builtBy=GoReleaser
-      - -X github.com/Arama0517/MCST/internal/build.treeState={{ .IsGitDirty }}
+      - -X github.com/Arama0517/dowserC/cmd/dowserC/main.version={{ .Version }}
 
 archives:
   - format: zip

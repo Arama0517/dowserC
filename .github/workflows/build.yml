@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: 测试并构建
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+env:
+  GOPROXY: https://proxy.golang.org,direct
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: 下载依赖
+        run: go mod download
+
+      - name: 运行测试
+        run: go test -v ./...
+
+      - name: 构建
+        run: go build -v ./cmd/dowserC
