@@ -58,7 +58,7 @@ func main() {
 		if !entry.IsDir() {
 			continue
 		}
-		modName, err := launcher.GenerateDotModFile(filepath.Join(launcher.ModDir, entry.Name()))
+		modName, err := launcher.GenerateModBootFile(filepath.Join(launcher.ModDir, entry.Name()))
 		if err != nil {
 			continue
 		}

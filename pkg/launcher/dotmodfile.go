@@ -12,7 +12,7 @@ import (
 
 var ErrNoNameFound = errors.New("没有找到Mod的名称")
 
-func GenerateDotModFile(path string) (string, error) {
+func GenerateModBootFile(path string) (string, error) {
 	byteData, err := os.ReadFile(filepath.Join(path, "descriptor.mod"))
 	if err != nil {
 		return "", err
@@ -43,4 +43,3 @@ func GenerateDotModFile(path string) (string, error) {
 	}
 	return modName, nil
 }
-
