@@ -1,6 +1,10 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: 3
 
+# WSL2
+env:
+  GOOS: windows
+
 tasks:
   tidy:
     desc: 更新依赖 (运行go mod tidy)
@@ -9,18 +13,14 @@ tasks:
 
   build:
     desc: 构建
-    env:
-      LC_ALL: C.UTF-8
     sources:
       - ./**/*.go
     generates:
       - "./dowserC.exe"
-    cmd: go build -o dowserC.exe {{ .CLI_ARGS }} ./cmd/dowserC
+    cmd: go build -o dowserC.exe {{ .CLI_ARGS }} .
 
   test:
     desc: 运行测试
-    env:
-      LC_ALL: C.UTF-8
     vars:
       SOURCE_FILES: '{{default "./..." .SOURCE_FILES}}'
       TEST_PATTERN: '{{default "." .TEST_PATTERN}}'
@@ -32,7 +32,9 @@ tasks:
 
   fmt:
     desc: 使用 gofumpt 格式化代码
-    cmd: gofumpt -w -l .
+    vars:
+      FILES: '{{default "." .FILES}}'
+    cmd: gofumpt -w -l {{ .FILES }}
 
   ci:
     desc: 运行CI

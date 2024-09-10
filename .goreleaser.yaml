@@ -1,6 +1,9 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 version: 2
 
+project_name: dowserC
+
+
 env:
   - GO111MODULE=on
 
@@ -16,7 +19,7 @@ metadata:
 
 builds:
   - binary: "dowserC"
-    main: "./cmd/dowserC"
+    main: "."
     goos:
       - windows
     goarch:
@@ -28,7 +31,11 @@ builds:
     ldflags:
       - -s
       - -w
-      - -X github.com/Arama0517/dowserC/cmd/dowserC/main.version={{ .Version }}
+      - -X main.version={{ .Version }}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{ .CommitDate }}
+      - -X main.builtBy=goreleaser
+      - -X main.treeState={{ .IsGitDirty }}
 
 archives:
   - format: zip
@@ -56,20 +63,17 @@ changelog:
       - Merge branch
       - go mod tidy
   groups:
-    - title: 依赖更新
-      regexp: '^.*?(.+)\(deps\)!?:.+$'
-      order: 300
     - title: 新功能
-      regexp: '^.*?feat(\(.+\))??!?:.+$'
+      regexp: ^.*?feat(\(.+\))??!?:.+$
       order: 100
     - title: 修复Bug
-      regexp: '^.*?(fix|refactor)(\(.+\))??!?:.+$'
+      regexp: ^.*?fix(\(.+\))??!?:.+$
       order: 200
     - title: 文档更新
-      regexp: ^.*?docs?(\(.+\))??!?:.+$
+      regexp: ^.*?docs(\(.+\))??!?:.+$
       order: 400
-    - title: 构建流程更新
-      regexp: ^.*?(build|ci)(\(.+\))??!?:.+$
+    - title: 依赖更新
+      regexp: ^.*?(.+)\(deps\)!?:.+$
       order: 400
     - title: 其他
       order: 9999
