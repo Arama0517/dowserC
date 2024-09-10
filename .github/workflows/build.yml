@@ -20,11 +20,15 @@ jobs:
         with:
           go-version-file: "go.mod"
 
+      - uses: arduino/setup-task@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: 下载依赖
         run: go mod download
 
       - name: 运行测试
-        run: go test -v ./...
+        run: task test -- -v
 
       - name: 构建
-        run: go build -v ./cmd/dowserC
+        run: task build -- -v
